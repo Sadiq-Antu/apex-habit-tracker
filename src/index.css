@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0A0B10;
+  --color-on-background: #e3e1e9;
+  
+  --color-surface: #14171F;
+  --color-surface-dim: #121318;
+  --color-surface-bright: #38393f;
+  
+  --color-surface-container-lowest: #0d0e13;
+  --color-surface-container-low: #1a1b21;
+  --color-surface-container: #1e1f25;
+  --color-surface-container-high: #292a2f;
+  --color-surface-container-highest: #34343a;
+  
+  --color-on-surface: #e3e1e9;
+  --color-on-surface-variant: #b9cacb;
+  
+  --color-outline: #849495;
+  --color-outline-variant: #3b494b;
+  
+  --color-primary: #dbfcff;
+  --color-on-primary: #00363a;
+  --color-primary-container: #00f0ff;
+  --color-on-primary-container: #006970;
+  --color-surface-tint: #00dbe9;
+  
+  --color-secondary: #d1bcff;
+  --color-on-secondary: #3c0090;
+  --color-secondary-container: #7000ff;
+  --color-on-secondary-container: #ddcdff;
+  
+  --color-tertiary: #e8f8ff;
+  --color-on-tertiary: #0d3540;
+  --color-tertiary-container: #badfed;
+  --color-on-tertiary-container: #406470;
+  
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+  
+  --font-sans: "Geist", system-ui, -apple-system, sans-serif;
+  --font-headline: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* Custom Design System Utilities matching 'stitch design' */
+.glass-card {
+  background: rgba(20, 23, 31, 0.8);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid #1C212C;
+  border-left: 1px solid rgba(28, 33, 44, 0.5);
+  border-right: 1px solid rgba(28, 33, 44, 0.5);
+  border-bottom: 1px solid rgba(28, 33, 44, 0.3);
+}
+
+.cyan-glow {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+}
+
+.cyan-glow-strong {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.cyan-glow-strong:hover {
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.45);
+}
+
+.radial-progress {
+  transform: rotate(-90deg);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Base resets and defaults */
+html, body, #root {
+  background-color: #0A0B10;
+  color: #e3e1e9;
+  font-family: "Geist", system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom input style matching DESIGN.md */
+.cyber-input {
+  background-color: #14171F;
+  border: none;
+  border-bottom: 2px solid #3b494b;
+  border-radius: 0px !important;
+  color: #e3e1e9;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-bottom-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cyber-input:focus {
+  border-bottom-color: #00F0FF;
+  box-shadow: 0 4px 12px rgba(0, 240, 255, 0.05);
+}
+
+/* Custom scrollbar for PC browsers */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0d0e13;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #292a2f;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3b494b;
+}

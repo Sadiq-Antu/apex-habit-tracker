@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Cyan glow effect -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" fill="#0A0B10" rx="0" />
+  <!-- Apex Logo graphic (Futuristic sharp A with a lightning/chevron style) -->
+  <g transform="translate(100, 110)" filter="url(#glow)">
+    <!-- Main A chevron left -->
+    <path d="M156 40 L40 250 L90 250 L156 120 L222 250 L272 250 Z" fill="#00F0FF" />
+    <!-- Main A chevron right overlay -->
+    <path d="M156 90 L222 220 L200 220 L156 130 L112 220 L90 220 Z" fill="#7000FF" opacity="0.8" />
+    <!-- Horizontal technical slash -->
+    <rect x="60" y="190" width="192" height="12" fill="#00F0FF" />
+    <!-- Small technical details -->
+    <circle cx="156" cy="40" r="6" fill="#00F0FF" />
+    <circle cx="40" cy="250" r="4" fill="#00F0FF" />
+    <circle cx="272" cy="250" r="4" fill="#00F0FF" />
+  </g>
+</svg>
