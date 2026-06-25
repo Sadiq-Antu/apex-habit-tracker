@@ -122,7 +122,7 @@ function App() {
 
   // Authentication logic
   useEffect(() => {
-    if (!isFirebaseConfigured) {
+    if (!isFirebaseConfigured || !auth) {
       // Load mock/local user if any from localStorage
       const localUser = localStorage.getItem('apex_user');
       if (localUser) {
@@ -150,7 +150,7 @@ function App() {
       return;
     }
 
-    if (!isFirebaseConfigured || user.uid === 'demo') {
+    if (!isFirebaseConfigured || !db || user.uid === 'demo') {
       // Local Storage Sync (Demo Mode)
       const loadLocalData = () => {
         const storedHabits = localStorage.getItem(`apex_habits_${user.uid}`);
@@ -249,7 +249,7 @@ function App() {
   // Auth Handlers
   const handleGoogleLogin = async () => {
     setAuthError('');
-    if (!isFirebaseConfigured) {
+    if (!isFirebaseConfigured || !auth) {
       // Demo Mode login
       const demoUser = {
         uid: 'demo',
@@ -275,7 +275,7 @@ function App() {
     setAuthError('');
     if (!email.trim() || !password.trim()) return;
 
-    if (!isFirebaseConfigured) {
+    if (!isFirebaseConfigured || !auth) {
       // Local Demo Mode Sign In
       const localUsers = JSON.parse(localStorage.getItem('apex_demo_users') || '{}');
       const savedUser = localUsers[email.toLowerCase()];
@@ -327,7 +327,7 @@ function App() {
     setAuthError('');
     if (!email.trim() || !password.trim() || !displayName.trim()) return;
 
-    if (!isFirebaseConfigured) {
+    if (!isFirebaseConfigured || !auth) {
       const localUsers = JSON.parse(localStorage.getItem('apex_demo_users') || '{}');
       if (localUsers[email.toLowerCase()]) {
         setAuthError('REGISTRATION FAILED // EMAIL ALREADY EXECUTED');
@@ -366,7 +366,7 @@ function App() {
   };
 
   const handleLogout = async () => {
-    if (!isFirebaseConfigured || user?.uid === 'demo') {
+    if (!isFirebaseConfigured || !auth || user?.uid === 'demo') {
       setUser(null);
       localStorage.removeItem('apex_user');
       return;
@@ -395,7 +395,7 @@ function App() {
       createdAt: new Date().toISOString()
     };
 
-    if (!isFirebaseConfigured || user.uid === 'demo') {
+    if (!isFirebaseConfigured || !db || user.uid === 'demo') {
       // Save locally
       const updated = [...habits, { id: Date.now().toString(), ...habitData }];
       setHabits(updated);
@@ -433,7 +433,7 @@ function App() {
       newStreak = newStreak + 1;
     }
 
-    if (!isFirebaseConfigured || user.uid === 'demo') {
+    if (!isFirebaseConfigured || !db || user.uid === 'demo') {
       const updated = habits.map(h => 
         h.id === habit.id ? { ...h, completions: newCompletions, streak: newStreak } : h
       );
@@ -456,7 +456,7 @@ function App() {
   const handleDeleteHabit = async (habitId) => {
     if (!window.confirm("Confirm deletion of this protocol? All progress records will be removed.")) return;
     
-    if (!isFirebaseConfigured || user.uid === 'demo') {
+    if (!isFirebaseConfigured || !db || user.uid === 'demo') {
       const updated = habits.filter(h => h.id !== habitId);
       setHabits(updated);
       localStorage.setItem(`apex_habits_${user.uid}`, JSON.stringify(updated));
@@ -483,7 +483,7 @@ function App() {
       createdAt: new Date().toISOString()
     };
 
-    if (!isFirebaseConfigured || user.uid === 'demo') {
+    if (!isFirebaseConfigured || !db || user.uid === 'demo') {
       const updated = [...focusTasks, { id: Date.now().toString(), ...taskData }];
       setFocusTasks(updated);
       localStorage.setItem(`apex_tasks_${user.uid}`, JSON.stringify(updated));
@@ -503,7 +503,7 @@ function App() {
   const handleToggleTask = async (task) => {
     const nextState = !task.completed;
 
-    if (!isFirebaseConfigured || user.uid === 'demo') {
+    if (!isFirebaseConfigured || !db || user.uid === 'demo') {
       const updated = focusTasks.map(t => 
         t.id === task.id ? { ...t, completed: nextState } : t
       );
@@ -521,7 +521,7 @@ function App() {
 
   // Delete Task
   const handleDeleteTask = async (taskId) => {
-    if (!isFirebaseConfigured || user.uid === 'demo') {
+    if (!isFirebaseConfigured || !db || user.uid === 'demo') {
       const updated = focusTasks.filter(t => t.id !== taskId);
       setFocusTasks(updated);
       localStorage.setItem(`apex_tasks_${user.uid}`, JSON.stringify(updated));

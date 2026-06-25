@@ -11,15 +11,31 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+let app = null;
+let auth = null;
+let googleProvider = null;
+let db = null;
 
-// Initialize Firestore with multi-tab offline persistence enabled
-const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({
-    tabManager: persistentMultipleTabManager()
-  })
-});
+// Safe check if Firebase is configured with real credentials
+const isConfigured = firebaseConfig.apiKey && 
+                      firebaseConfig.apiKey !== 'your_api_key_here' && 
+                      firebaseConfig.apiKey !== 'undefined';
+
+if (isConfigured) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    googleProvider = new GoogleAuthProvider();
+    
+    // Initialize Firestore with multi-tab offline persistence enabled
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+      })
+    });
+  } catch (error) {
+    console.error("Firebase SDK initialization failed:", error);
+  }
+}
 
 export { auth, googleProvider, db };
