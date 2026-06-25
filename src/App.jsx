@@ -1158,12 +1158,14 @@ function App() {
                           </div>
 
                           <div className="flex justify-between items-start mb-4">
-                            <div className="p-3 bg-primary-container/10 text-primary-container border border-primary-container/10">
-                              <span className="material-symbols-outlined text-xl">{habit.icon || 'bolt'}</span>
-                            </div>
-                            <div className="text-right">
-                              <span className="block font-headline text-2xl text-on-surface font-bold leading-none">{habit.streak || 0}</span>
-                              <span className="font-mono text-[9px] text-on-surface-variant uppercase tracking-wider">Day Streak</span>
+                            <div className="flex items-center gap-3">
+                              <div className="p-3 bg-primary-container/10 text-primary-container border border-primary-container/10">
+                                <span className="material-symbols-outlined text-xl">{habit.icon || 'bolt'}</span>
+                              </div>
+                              <div>
+                                <span className="block font-headline text-2xl text-on-surface font-bold leading-none">{habit.streak || 0}</span>
+                                <span className="font-mono text-[9px] text-on-surface-variant uppercase tracking-wider">Day Streak</span>
+                              </div>
                             </div>
                           </div>
 
