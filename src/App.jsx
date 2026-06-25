@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { 
   auth, 
   googleProvider, 
-  db 
+  db,
+  isFirebaseConfigured as firebaseConfigAvailable
 } from './firebase';
 import { 
   signInWithPopup, 
@@ -27,7 +28,7 @@ import {
 
 function App() {
   // Connection and Configuration state
-  const [isFirebaseConfigured, setIsFirebaseConfigured] = useState(false);
+  const [isFirebaseConfigured, setIsFirebaseConfigured] = useState(firebaseConfigAvailable);
   const [online, setOnline] = useState(navigator.onLine);
   
   // Auth state
@@ -83,9 +84,7 @@ function App() {
 
   // Check if Firebase is configured
   useEffect(() => {
-    const hasConfig = import.meta.env.VITE_FIREBASE_API_KEY && 
-                      import.meta.env.VITE_FIREBASE_API_KEY !== 'your_api_key_here';
-    setIsFirebaseConfigured(!!hasConfig);
+    setIsFirebaseConfigured(firebaseConfigAvailable);
   }, []);
 
   // Monitor network status
