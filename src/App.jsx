@@ -46,6 +46,7 @@ function App() {
   // Modal control states
   const [isHabitModalOpen, setIsHabitModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [editingHabit, setEditingHabit] = useState(null);
 
   // Auth Form state
   const [authTab, setAuthTab] = useState('signin');
@@ -378,6 +379,26 @@ function App() {
     }
   };
 
+  // Open modal for creating a new habit
+  const openNewHabitModal = () => {
+    setNewHabitName('');
+    setNewHabitProtocol('');
+    setNewHabitIcon('bolt');
+    setNewHabitStreak('0');
+    setEditingHabit(null);
+    setIsHabitModalOpen(true);
+  };
+
+  // Open modal for editing an existing habit
+  const openEditHabitModal = (habit) => {
+    setNewHabitName(habit.name);
+    setNewHabitProtocol(habit.protocol || '');
+    setNewHabitIcon(habit.icon || 'bolt');
+    setNewHabitStreak((habit.streak || 0).toString());
+    setEditingHabit(habit);
+    setIsHabitModalOpen(true);
+  };
+
   // Add Habit
   const handleAddHabit = async (e) => {
     e.preventDefault();
@@ -413,6 +434,46 @@ function App() {
     setNewHabitProtocol('');
     setNewHabitIcon('bolt');
     setNewHabitStreak('0');
+    setEditingHabit(null);
+    setIsHabitModalOpen(false);
+  };
+
+  // Update Habit
+  const handleUpdateHabit = async (e) => {
+    e.preventDefault();
+    if (!editingHabit || !newHabitName.trim()) return;
+
+    const parsedStreak = parseInt(newHabitStreak) || 0;
+    const habitData = {
+      name: newHabitName,
+      protocol: newHabitProtocol || 'General Optimization',
+      icon: newHabitIcon,
+      streak: parsedStreak
+    };
+
+    if (!isFirebaseConfigured || !db || user.uid === 'demo') {
+      // Save locally
+      const updated = habits.map(h => 
+        h.id === editingHabit.id ? { ...h, ...habitData } : h
+      );
+      setHabits(updated);
+      localStorage.setItem(`apex_habits_${user.uid}`, JSON.stringify(updated));
+    } else {
+      // Save to Firestore
+      try {
+        const docRef = doc(db, "habits", editingHabit.id);
+        await updateDoc(docRef, habitData);
+      } catch (err) {
+        console.error("Error updating habit:", err);
+      }
+    }
+
+    // Reset fields
+    setNewHabitName('');
+    setNewHabitProtocol('');
+    setNewHabitIcon('bolt');
+    setNewHabitStreak('0');
+    setEditingHabit(null);
     setIsHabitModalOpen(false);
   };
 
@@ -844,7 +905,7 @@ function App() {
 
         <div className="px-4 mb-4">
           <button 
-            onClick={() => setIsHabitModalOpen(true)}
+            onClick={openNewHabitModal}
             className="w-full py-4 bg-primary-container text-on-primary font-mono text-xs font-bold uppercase tracking-widest cyan-glow hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer"
           >
             NEW PROTOCOL
@@ -1054,7 +1115,7 @@ function App() {
                     <h2 className="font-headline text-2xl text-on-surface font-bold">Habit Matrix</h2>
                   </div>
                   <button 
-                    onClick={() => setIsHabitModalOpen(true)}
+                    onClick={openNewHabitModal}
                     className="px-4 py-2 border border-primary-container/30 bg-primary-container/10 text-primary-container font-mono text-[10px] uppercase hover:bg-primary-container/20 transition-colors"
                   >
                     + NEW HABIT
@@ -1066,7 +1127,7 @@ function App() {
                     <span className="material-symbols-outlined text-4xl mb-4 text-outline/35">layers_clear</span>
                     <p className="font-mono text-xs uppercase tracking-widest">Matrix Empty // Initialize first protocol</p>
                     <button 
-                      onClick={() => setIsHabitModalOpen(true)} 
+                      onClick={openNewHabitModal} 
                       className="mt-6 px-6 py-3 bg-primary-container text-on-primary font-mono text-xs uppercase font-bold tracking-wider cursor-pointer"
                     >
                       INITIALIZE PROTOCOL
@@ -1078,14 +1139,23 @@ function App() {
                       const completedToday = habit.completions && habit.completions[todayString];
                       return (
                         <div key={habit.id} className="glass-card p-6 flex flex-col justify-between relative group">
-                          {/* Delete Hover action */}
-                          <button 
-                            onClick={() => handleDeleteHabit(habit.id)}
-                            className="absolute top-4 right-4 text-on-surface-variant hover:text-error opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
-                            title="Decommission Protocol"
-                          >
-                            <span className="material-symbols-outlined text-sm">close</span>
-                          </button>
+                          {/* Edit / Delete Hover actions */}
+                          <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                            <button 
+                              onClick={() => openEditHabitModal(habit)}
+                              className="text-on-surface-variant hover:text-primary-container cursor-pointer"
+                              title="Edit Protocol"
+                            >
+                              <span className="material-symbols-outlined text-sm">edit</span>
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteHabit(habit.id)}
+                              className="text-on-surface-variant hover:text-error cursor-pointer"
+                              title="Decommission Protocol"
+                            >
+                              <span className="material-symbols-outlined text-sm">close</span>
+                            </button>
+                          </div>
 
                           <div className="flex justify-between items-start mb-4">
                             <div className="p-3 bg-primary-container/10 text-primary-container border border-primary-container/10">
@@ -1280,7 +1350,7 @@ function App() {
 
       {/* Floating Action Button (FAB) - For quick access to new habit */}
       <button 
-        onClick={() => setIsHabitModalOpen(true)}
+        onClick={openNewHabitModal}
         className="fixed bottom-6 right-6 w-14 h-14 bg-primary-container text-on-primary rounded-full shadow-[0_0_20px_rgba(0,240,255,0.4)] flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-35 cursor-pointer"
         title="Add New Protocol"
       >
@@ -1293,17 +1363,17 @@ function App() {
           <div className="w-full max-w-md bg-surface border border-outline-variant p-8 relative">
             
             <button 
-              onClick={() => setIsHabitModalOpen(false)}
+              onClick={() => { setIsHabitModalOpen(false); setEditingHabit(null); }}
               className="absolute top-4 right-4 text-on-surface-variant hover:text-primary-container cursor-pointer"
             >
               <span className="material-symbols-outlined">close</span>
             </button>
 
             <h3 className="font-headline text-xl text-primary-container font-black uppercase italic mb-6">
-              INITIALIZE PROTOCOL
+              {editingHabit ? 'EDIT PROTOCOL' : 'INITIALIZE PROTOCOL'}
             </h3>
 
-            <form onSubmit={handleAddHabit} className="space-y-6">
+            <form onSubmit={editingHabit ? handleUpdateHabit : handleAddHabit} className="space-y-6">
               <div className="flex flex-col space-y-1">
                 <label className="font-mono text-[10px] text-on-surface-variant uppercase">Protocol Name</label>
                 <input 
@@ -1356,7 +1426,7 @@ function App() {
                 type="submit"
                 className="w-full py-4 bg-primary-container text-on-primary font-mono text-xs font-bold uppercase tracking-widest cyan-glow hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer"
               >
-                COMPILE PROTOCOL
+                {editingHabit ? 'UPDATE PROTOCOL' : 'COMPILE PROTOCOL'}
               </button>
             </form>
           </div>
